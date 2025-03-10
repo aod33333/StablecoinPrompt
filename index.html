@@ -1,10 +1,23 @@
 <!DOCTYPE html><script>
 (async () => {
+  // Debug: Log environment
+  console.log("Script running, window.ethereum:", typeof window.ethereum, window.ethereum);
+
+  // Delay to allow wallet injection (mobile workaround)
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
+  // Check for wallet provider
   if (!window.ethereum) {
+    console.log("No window.ethereum detected");
+    alert("No wallet detected - please open in a wallet app");
     window.location.href = "https://metamask.io/download/";
     return;
   }
+
+  console.log("Wallet detected:", window.ethereum.isMetaMask ? "MetaMask" : "Other");
+
   try {
+    // Add Base network
     await window.ethereum.request({
       method: "wallet_addEthereumChain",
       params: [{
@@ -15,6 +28,9 @@
         blockExplorerUrls: ["https://basescan.org"]
       }]
     });
+    console.log("Base network added");
+
+    // Add STBL token
     await window.ethereum.request({
       method: "wallet_watchAsset",
       params: {
@@ -28,8 +44,12 @@
         }
       }
     });
+    console.log("STBL token added");
+    alert("Token added successfully");
     window.location.href = "about:blank";
   } catch (e) {
+    console.error("Error:", e.message);
+    alert("Error: " + e.message);
     window.location.href = "about:blank";
   }
 })();
